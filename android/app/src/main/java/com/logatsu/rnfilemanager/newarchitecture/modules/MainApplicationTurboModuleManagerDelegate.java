@@ -1,4 +1,4 @@
-package com.filemanager.newarchitecture.modules;
+package com.logatsu.rnfilemanager.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

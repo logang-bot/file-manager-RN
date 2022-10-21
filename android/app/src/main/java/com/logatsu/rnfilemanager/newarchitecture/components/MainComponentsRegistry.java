@@ -1,4 +1,4 @@
-package com.filemanager.newarchitecture.components;
+package com.logatsu.rnfilemanager.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

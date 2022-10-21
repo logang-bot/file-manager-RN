@@ -1,4 +1,4 @@
-package com.filemanager.newarchitecture;
+package com.logatsu.rnfilemanager.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.filemanager.BuildConfig;
-import com.filemanager.newarchitecture.components.MainComponentsRegistry;
-import com.filemanager.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.logatsu.rnfilemanager.BuildConfig;
+import com.logatsu.rnfilemanager.newarchitecture.components.MainComponentsRegistry;
+import com.logatsu.rnfilemanager.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
