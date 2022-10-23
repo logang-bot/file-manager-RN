@@ -23,12 +23,16 @@ const Login = (props: TypeLoginProps) => {
   const dispatch = useAppDispatch();
 
   const loginUser = async () => {
+    if (email === '' || password === '') {
+      setError('Some fields are empty');
+      return;
+    }
     const result = await logInWithEmailAndPassword(email, password);
     if (result !== 'Done') {
       setError(result);
       return;
     }
-    dispatch(authActions.logIn({user: currentUser}));
+    dispatch(authActions.logIn(currentUser?.toJSON() ?? {}));
   };
   return (
     <View style={[styles.container, props.style]}>
@@ -46,6 +50,7 @@ const Login = (props: TypeLoginProps) => {
         <Text>Password</Text>
         <Input
           placeholder="*********"
+          secureTextEntry={true}
           onChangeText={text => {
             setPassword(text);
           }}

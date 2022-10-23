@@ -1,22 +1,37 @@
-import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import {useAppDispatch} from '../store';
+import {fileSystemActions} from '../store/fileSystem';
+
 import Home from '../screens/Home';
 import Web from '../screens/Web';
 import FileTransfer from '../screens/FileTransfer';
 import Settings from '../screens/Settings';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {MainStackParamsList} from './MainStack';
+import {getDirectories} from '../features/directories/lib/FileSystem';
 
-const Stack = createNativeStackNavigator();
-const BottomTabs = createBottomTabNavigator();
+const BottomTabs = createBottomTabNavigator<MainStackParamsList>();
 
 const MainNavigation = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const fetchDirs = async () => {
+      const result = await getDirectories();
+      dispatch(fileSystemActions.getFiles(result));
+    };
+    fetchDirs();
+  }, [dispatch]);
+
   return (
     <BottomTabs.Navigator>
       <BottomTabs.Screen
         name="Home"
         component={Home}
         options={{
+          tabBarLabel: 'Home',
           tabBarIcon: ({color, size}) => (
             <Icon name="home" size={size} color={color} />
           ),

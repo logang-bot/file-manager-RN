@@ -15,7 +15,7 @@ const AppNavigation = () => {
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(authActions.logIn({user: currentUser}));
+      dispatch(authActions.logIn(currentUser.toJSON()));
     }
   }, [dispatch]);
 

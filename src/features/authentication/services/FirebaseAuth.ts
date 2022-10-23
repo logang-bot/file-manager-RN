@@ -9,8 +9,8 @@ export const signInWithEmailAndPassword = async (
   try {
     await auth().createUserWithEmailAndPassword(email, password);
     return 'Done';
-  } catch (error: Error) {
-    return error.message;
+  } catch (error) {
+    return (error as Error).message.split(' ').slice(1).join(' ');
   }
 };
 
@@ -22,18 +22,22 @@ export const logInWithEmailAndPassword = async (
     await auth().signInWithEmailAndPassword(email, password);
     return 'Done';
   } catch (error) {
-    return error + '';
+    return (error as Error).message.split(' ').slice(1).join(' ');
   }
 };
 
 export const signInWithGoogle = async () => {
-  GoogleSignin.configure({
-    webClientId: Config.WEB_CLIENT_ID,
-  });
-  await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-  const {idToken} = await GoogleSignin.signIn();
-  const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-  return auth().signInWithCredential(googleCredential);
+  try {
+    GoogleSignin.configure({
+      webClientId: Config.WEB_CLIENT_ID,
+    });
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+    const {idToken} = await GoogleSignin.signIn();
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    return auth().signInWithCredential(googleCredential);
+  } catch (error) {
+    return error as Error;
+  }
 };
 
 export const currentUser = auth().currentUser;

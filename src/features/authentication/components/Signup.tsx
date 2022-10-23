@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {useAppDispatch} from '../../../store';
 
@@ -23,12 +23,11 @@ const Signup = (props: TypeSignUpProps) => {
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setisLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
   const signupUser = async () => {
-    if (name === '' || password === '') {
+    if (name === '' || password === '' || email === '') {
       setError('Some fields are empty');
       return;
     }
@@ -45,7 +44,7 @@ const Signup = (props: TypeSignUpProps) => {
       setError("The passwords doesn't match");
       return;
     }
-    dispatch(authActions.logIn({user: currentUser}));
+    dispatch(authActions.logIn(currentUser?.toJSON() ?? {}));
   };
 
   return (
