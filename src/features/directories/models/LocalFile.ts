@@ -1,4 +1,5 @@
 export interface ILocalFile {
+  id: string;
   isDirectory: boolean;
   isFile: boolean;
   creationTime: number;

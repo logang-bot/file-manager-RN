@@ -1,22 +1,37 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useRef} from 'react';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {useNavigation} from '@react-navigation/native';
 
+import {useAppDispatch} from '../../../store';
+import {fileSystemActions} from '../../../store/fileSystem';
+
+import {timeAgo} from '../../../utils/TimeParser';
 import {ILocalFile} from '../models/LocalFile';
-
-TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo('en-US');
+import DirectoryOptions from './DirectoryOptions';
 
 type FileItemProps = {
   item: ILocalFile;
 };
 
 const FileItem = ({item}: FileItemProps) => {
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+  const refRBSheet = useRef<RBSheet>(null);
+
+  const onPressMore = () => {
+    refRBSheet.current!.open();
+  };
+
+  const onSelectFolder = () => {
+    navigation.push('FileList', {currentPath: item.path});
+    dispatch(fileSystemActions.getFilesFS(item.path));
+  };
+
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onSelectFolder}>
       <View style={styles.mainContent}>
         {item.isDirectory ? (
           <Icon name="folder" size={32} />
@@ -29,8 +44,11 @@ const FileItem = ({item}: FileItemProps) => {
           <Text>{timeAgo.format(item.creationTime)}</Text>
         </View>
       </View>
-      <FeatherIcon name="more-vertical" size={24} />
-    </View>
+      <FeatherIcon name="more-vertical" size={24} onPress={onPressMore} />
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true}>
+        <DirectoryOptions file={item} />
+      </RBSheet>
+    </Pressable>
   );
 };
 
@@ -40,6 +58,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     marginVertical: 5,
+    alignItems: 'center',
   },
   itemInfoContainer: {
     flexDirection: 'column',

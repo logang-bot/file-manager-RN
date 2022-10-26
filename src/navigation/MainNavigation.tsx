@@ -10,7 +10,6 @@ import Web from '../screens/Web';
 import FileTransfer from '../screens/FileTransfer';
 import Settings from '../screens/Settings';
 import {MainStackParamsList} from './MainStack';
-import {getDirectories} from '../features/directories/lib/FileSystem';
 
 const BottomTabs = createBottomTabNavigator<MainStackParamsList>();
 
@@ -19,8 +18,7 @@ const MainNavigation = () => {
 
   useEffect(() => {
     const fetchDirs = async () => {
-      const result = await getDirectories();
-      dispatch(fileSystemActions.getFiles(result));
+      dispatch(fileSystemActions.getFilesFS('/'));
     };
     fetchDirs();
   }, [dispatch]);

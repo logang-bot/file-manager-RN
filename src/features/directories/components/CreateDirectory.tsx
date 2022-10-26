@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, Modal} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {Dialog} from 'react-native-simple-dialogs';
 import {useAppDispatch} from '../../../store';
 import {fileSystemActions} from '../../../store/fileSystem';
 
 import Input from '../../../components/form/Input';
 import Button from '../../../components/ui/Button';
-import {makeDirectory, getSingleDirectory} from '../lib/FileSystem';
-import {createLocalFile} from '../utils/LocalFileParser';
 
 type CreateDirectProps = {
   visible: boolean;
@@ -19,9 +17,7 @@ const CreateDirectory = (props: CreateDirectProps) => {
   const dispatch = useAppDispatch();
 
   const saveFolder = async () => {
-    await makeDirectory(folderName);
-    const newFolder = createLocalFile(folderName, true);
-    dispatch(fileSystemActions.addFile(newFolder));
+    dispatch(fileSystemActions.createFolderFS(folderName));
     props.onTouchOutside();
   };
   return (

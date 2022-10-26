@@ -1,37 +1,67 @@
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
-import {makeDirectory} from '../features/directories';
-import {ILocalFile} from '../features/directories/models/LocalFile';
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from '@reduxjs/toolkit';
 
-interface State {
-  files: ILocalFile[];
-}
+import {
+  makeDirectory,
+  removeDirectory,
+  getDirectories,
+  createLocalFile,
+  ILocalFile,
+} from '../features/directories';
 
-export const createFolderThunk = createAsyncThunk(
+const fileAdapter = createEntityAdapter<ILocalFile>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
+
+const createFolderFS = createAsyncThunk(
   'fileSystem/createFolder',
-  async (path: string, thunkAPI) => {
-    makeDirectory(path);
+  async (path: string) => {
+    await makeDirectory(path);
+    return createLocalFile(path, true);
+  },
+);
+
+const removeFolderFs = createAsyncThunk(
+  'fileSystem/removeFolder',
+  async (file: ILocalFile) => {
+    await removeDirectory(file.path);
+    return file;
+  },
+);
+
+const getFilesFS = createAsyncThunk(
+  'fileSystem/getFiles',
+  async (path: string) => {
+    const result = await getDirectories(path);
+    return result;
   },
 );
 
 const fileSystemSlice = createSlice({
   name: 'fileSystem',
-  initialState: {
-    files: [],
-  } as State,
-  reducers: {
-    addFile: (state, {payload}: PayloadAction<ILocalFile>) => {
-      state.files.push(payload);
-    },
-    getFiles: (state, {payload}: PayloadAction<ILocalFile[]>) => {
-      state.files = payload;
-    },
-  },
+  initialState: fileAdapter.getInitialState(),
+  reducers: {},
   extraReducers: builder => {
-    builder.addCase(createFolderThunk.fulfilled, (state, action) => {
-      console.log('folder created');
+    builder.addCase(createFolderFS.fulfilled, (state, action) => {
+      fileAdapter.addOne(state, action.payload);
+    });
+    builder.addCase(removeFolderFs.fulfilled, (state, action) => {
+      fileAdapter.removeOne(state, action.payload.id);
+    });
+    builder.addCase(getFilesFS.fulfilled, (state, action) => {
+      fileAdapter.setAll(state, action.payload);
     });
   },
 });
 
-export const fileSystemActions = fileSystemSlice.actions;
+export const fileSelector = fileAdapter.getSelectors();
+export const fileSystemActions = {
+  ...fileSystemSlice.actions,
+  createFolderFS,
+  removeFolderFs,
+  getFilesFS,
+};
 export default fileSystemSlice.reducer;

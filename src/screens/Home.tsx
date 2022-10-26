@@ -1,27 +1,27 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+
 import {MainStackParamsList} from '../navigation/MainStack';
-import {getDirectories} from '../features/directories/lib/FileSystem';
+
 import {CreateDirectory} from '../features/directories';
-import {RootState} from '../store';
 import FileList from '../features/directories/components/FileList';
+import {HomeStackParamsList} from '../navigation/HomeStack';
 
 type navProps = NativeStackScreenProps<MainStackParamsList, 'Home'>;
 
+const Stack = createNativeStackNavigator<HomeStackParamsList>();
+
 const Home = ({navigation}: navProps) => {
   const [isShowingDialog, setIsShowingDialog] = useState(false);
-  const fileSystem = useSelector((state: RootState) => state.fileSystem);
 
   const createFolder = () => {
-    // dispatch(createFolderThunk('test'));
-    // makeDirectory('test');
-    // getDirectories('test');
     setIsShowingDialog(true);
-    console.log('showing dialog');
   };
 
   useEffect(() => {
@@ -48,13 +48,21 @@ const Home = ({navigation}: navProps) => {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <FileList data={fileSystem.files} />
+    <>
+      <NavigationContainer independent={true}>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="FileList"
+            component={FileList}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
       <CreateDirectory
         visible={isShowingDialog}
         onTouchOutside={() => setIsShowingDialog(false)}
       />
-    </View>
+    </>
   );
 };
 
